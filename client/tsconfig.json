@@ -1,0 +1,24 @@
+{
+  "extends": "./configs/base.tsconfig",
+  "compilerOptions": {
+    "skipLibCheck": false,
+    "baseUrl": ".",
+    "paths": {
+      "papyrus-sprotty": [
+        "papyrus-gefx/papyrus-sprotty/src/*"
+      ],
+      "papyrus-glsp-extension": [
+        "papyrus-gefx/papyrus-glsp-extension/src/*"
+      ]
+    },
+    "plugins": [
+      {
+        "name": "tslint-language-service"
+      }
+    ]
+  },
+  "include": [
+    "dev-packages/*/src",
+    "papyrus-gefx/*/src"
+  ]
+}

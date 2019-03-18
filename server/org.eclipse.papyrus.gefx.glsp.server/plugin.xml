@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="org.eclipse.papyrus.gefx.uml.clazz.samplegefcommand"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.papyrus.gefx.uml.clazz.samplegefcommand"
+            name="Start Sample GEFx Server">
+         <defaultHandler
+               class="org.eclipse.papyrus.gefx.glsp.server.GEFxServerLauncher">
+            <parameter
+                  name="org.eclipse.papyrus.gefx.uml.clazz.parameter1"
+                  value="org.eclipse.papyrus.gefx.uml.clazz.parameter1">
+            </parameter>
+         </defaultHandler>
+      </command>
+   </extension>
+
+</plugin>

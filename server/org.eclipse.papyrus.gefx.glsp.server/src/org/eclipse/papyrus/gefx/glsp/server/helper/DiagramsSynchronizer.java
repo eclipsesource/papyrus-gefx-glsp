@@ -1,0 +1,119 @@
+package org.eclipse.papyrus.gefx.glsp.server.helper;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.fx.core.ThreadSynchronize;
+import org.eclipse.gef.mvc.fx.parts.IRootPart;
+import org.eclipse.gef.mvc.fx.viewer.IViewer;
+import org.eclipse.papyrus.gefx.glsp.server.GEFModelBuilder;
+import org.eclipse.sprotty.SModelRoot;
+import org.eclipse.swt.widgets.Display;
+
+import javafx.scene.Node;
+
+public class DiagramsSynchronizer {
+	
+	private final Map<String, GEFToGraphSynchronizer> handledDiagrams = new HashMap<>();
+	
+	private final ListenerList<GraphListener> listeners = new ListenerList<>();
+	
+	public SModelRoot getModel(String modelId) {
+		return handledDiagrams.get(modelId).getModel();
+	}
+	
+	public void refresh(String modelId) {
+		Display.getDefault().syncExec(() -> {});
+		handledDiagrams.get(modelId).refresh();
+	}
+	
+	public IViewer getViewer(String modelId) {
+		return handledDiagrams.get(modelId).getViewer();
+	}
+
+	public String init(IViewer viewer, GEFModelBuilder gefModelBuilder, ThreadSynchronize threadSync) {
+		GEFToGraphSynchronizer synchronizer = new GEFToGraphSynchronizer();
+		
+		// ModelId may be unknown yet; wait until the viewer is fully loaded before returning one
+		AtomicReference<String> modelId = new AtomicReference<String>(null);
+		getModelId(viewer).ifPresent(modelId::set);
+		
+		if (modelId.get() == null) {
+			System.err.println("Waiting until model is initialized");
+			GEFToGraphSynchronizer.GraphListener initializationListener = new GEFToGraphSynchronizer.GraphListener() {
+				@Override
+				public void graphChanged(SModelRoot graph) {
+					System.err.println("Graph changed (init)");
+					getModelId(viewer).ifPresent(id -> {
+						System.err.println("Id was set; model is ready");
+						modelId.set(id);
+						synchronizer.removeListener(this);
+					});
+				}
+			};
+			synchronizer.addListener(initializationListener);
+		}
+		synchronizer.addListener(newGraph -> {
+			if (modelId.get() != null) {
+				System.err.println("Graph changed (runtime)");
+				listeners.forEach(listener -> listener.graphChanged(modelId.get(), newGraph));
+			}
+		});
+		synchronizer.init(viewer, gefModelBuilder, threadSync);
+		
+		long timeout = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
+		while (modelId.get() == null) {
+			if (System.currentTimeMillis() >= timeout) {
+				return null;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				return null;
+			}
+		}
+		
+		handledDiagrams.put(modelId.get(), synchronizer);
+		System.err.println("Do return");
+		return modelId.get();
+	}
+	
+	private Optional<String> getModelId(IViewer viewer){
+		if (viewer.isActive()) {
+			IRootPart<? extends Node> rootPart = viewer.getRootPart();
+			if (rootPart != null && !rootPart.getContentPartChildren().isEmpty()) {
+				Object content = rootPart.getContentPartChildren().get(0).getContent();
+				if (content instanceof EObject) {
+					return Optional.of(EcoreUtil.getURI((EObject)content).toString());
+				}
+			}
+		}
+		
+		return Optional.empty();
+	}
+	
+	public void addListener(GraphListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeListener(GraphListener listener) {
+		listeners.remove(listener);
+	}
+	
+	public static interface GraphListener {
+		void graphChanged(String modelId, SModelRoot graph);
+	}
+
+	public Collection<String> getModels() {
+		return handledDiagrams.keySet();
+	}
+	
+}

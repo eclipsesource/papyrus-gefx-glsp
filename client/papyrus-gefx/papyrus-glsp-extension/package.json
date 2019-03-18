@@ -1,0 +1,43 @@
+{
+  "name": "papyrus-glsp-extension",
+  "keywords": [
+    "theia-extension"
+  ],
+  "description": "Theia extension for the Papyrus GLSP example",
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
+  "version": "0.0.0",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "author": {
+    "name": "EclipseSource"
+  },
+  "dependencies": {
+    "@glsp/theia-integration": "next",
+    "@theia/core": "^0.5.0",
+    "@theia/editor": "^0.5.0",
+    "@theia/filesystem": "^0.5.0",
+    "@theia/languages": "^0.5.0",
+    "@theia/monaco": "^0.5.0",
+    "@types/node": "^8.0.14",
+    "papyrus-sprotty": "0.1.0"
+  },
+  "devDependencies": {
+    "rimraf": "latest",
+    "typescript": "latest"
+  },
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "rimraf lib",
+    "build": "tsc && yarn run lint",
+    "lint": "tslint -c ../../configs/tslint.json --project ./tsconfig.json",
+    "watch": "tsc -w"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/frontend-module",
+      "backend": "lib/node/backend-module"
+    }
+  ]
+}

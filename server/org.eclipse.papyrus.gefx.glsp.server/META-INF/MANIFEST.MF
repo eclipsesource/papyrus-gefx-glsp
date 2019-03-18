@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Papyrus GEFx GLSP Server
+Bundle-SymbolicName: org.eclipse.papyrus.gefx.glsp.server;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Eclipse Modeling Project
+Automatic-Module-Name: org.eclipse.papyrus.gefx.glsp.server
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.glsp.server;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.ui;bundle-version="3.110.0",
+ org.eclipse.gef.mvc.fx,
+ org.eclipse.gef.common;bundle-version="5.0.0",
+ org.eclipse.fx.core,
+ org.apache.log4j;bundle-version="1.2.15",
+ org.eclipse.core.jobs,
+ org.eclipse.core.resources,
+ org.eclipse.papyrus.gef4,
+ org.eclipse.ui.workbench,
+ org.eclipse.emf.common,
+ org.eclipse.emf.common.ui,
+ org.eclipse.papyrus.infra.ui,
+ org.eclipse.papyrus.infra.services.openelement,
+ org.eclipse.papyrus.infra.gefdiag.common,
+ org.eclipse.papyrus.infra.emf,
+ org.eclipse.papyrus.gefx.e3
+Export-Package: org.eclipse.papyrus.gefx.glsp.server,
+ org.eclipse.papyrus.gefx.glsp.server.common,
+ org.eclipse.papyrus.gefx.glsp.server.handlers,
+ org.eclipse.papyrus.gefx.glsp.server.helper
+Import-Package: org.eclipse.core.runtime
