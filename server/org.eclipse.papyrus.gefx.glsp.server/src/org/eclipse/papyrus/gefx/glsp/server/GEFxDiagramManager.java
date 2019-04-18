@@ -12,14 +12,21 @@ import org.eclipse.sprotty.SLabel;
 import org.eclipse.sprotty.SModelElement;
 import org.eclipse.sprotty.SNode;
 
-import com.eclipsesource.glsp.api.provider.ModelTypeConfigurationProvider;
 import com.eclipsesource.glsp.api.types.EdgeTypeHint;
 import com.eclipsesource.glsp.api.types.NodeTypeHint;
+import com.eclipsesource.glsp.server.AbstractDiagramManager;
 
-public class GEFxTypeConfigurationProvider implements ModelTypeConfigurationProvider{
+public class GEFxDiagramManager extends AbstractDiagramManager {
+	
+	/**
+	 * The GEFx-GLSP Integration Diagram type
+	 * 
+	 * This must be the same value as the client's gefx-language.ts#DiagramType
+	 */
+	public static final String DIAGRAM_TYPE = "gefx-diagram"; 
 
 	@Override
-	public Map<String, Class<? extends SModelElement>> getTypeToClassMappings() {
+	public Map<String, Class<? extends SModelElement>> getTypeMappings() {
 		HashMap<String, Class<? extends SModelElement>> types = new HashMap<>();
 		
 		types.put("node", SNode.class);
@@ -42,6 +49,11 @@ public class GEFxTypeConfigurationProvider implements ModelTypeConfigurationProv
 		nodeHints.add(new NodeTypeHint("comp", false, false, false));
 		nodeHints.add(new NodeTypeHint("label", true, false, false));
 		return nodeHints;
+	}
+
+	@Override
+	public String getDiagramType() {
+		return DIAGRAM_TYPE; // Single DiagramManager proxy for generic GEFx Diagrams
 	}
 
 

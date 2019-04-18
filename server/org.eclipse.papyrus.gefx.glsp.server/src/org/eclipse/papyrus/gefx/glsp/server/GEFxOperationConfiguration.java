@@ -25,7 +25,7 @@ public class GEFxOperationConfiguration implements OperationConfiguration {
 	private DiagramsSynchronizer gefSynchronizer;
 	
 	@Override
-	public Operation[] getOperations(RequestOperationsAction action) {
+	public List<Operation> getOperations(RequestOperationsAction action) {
 		List<Operation> paletteOperations = new ArrayList<>();
 
 		PaletteDescriptor paletteDescriptor = gefSynchronizer.getViewer(getModelId(action))
@@ -53,7 +53,7 @@ public class GEFxOperationConfiguration implements OperationConfiguration {
 			}
 		}
 
-		return paletteOperations.toArray(new Operation[paletteOperations.size()]);
+		return paletteOperations;
 	}
 	
 	private String getModelId(RequestOperationsAction action) {

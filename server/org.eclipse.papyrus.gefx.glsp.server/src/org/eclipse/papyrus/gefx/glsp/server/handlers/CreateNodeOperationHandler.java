@@ -33,11 +33,11 @@ import org.eclipse.papyrus.infra.emf.gmf.command.GMFtoEMFCommandWrapper;
 import org.eclipse.papyrus.infra.emf.utils.EMFHelper;
 import org.eclipse.sprotty.Point;
 import org.eclipse.sprotty.SModelRoot;
-import org.eclipse.swt.widgets.Display;
 
 import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.CreateNodeOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
+import com.eclipsesource.glsp.api.model.GraphicalModelState;
 import com.eclipsesource.glsp.api.model.ModelState;
 
 import javafx.collections.ObservableList;
@@ -56,7 +56,7 @@ public class CreateNodeOperationHandler implements OperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction action, ModelState modelState) {
+	public Optional<SModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
 		CreateNodeOperationAction createAction = (CreateNodeOperationAction)action;
 		
 		String modelId = ModelUtil.getModelId(modelState);

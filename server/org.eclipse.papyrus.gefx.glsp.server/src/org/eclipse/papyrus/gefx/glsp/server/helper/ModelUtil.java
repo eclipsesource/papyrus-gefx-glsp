@@ -6,8 +6,8 @@ import com.eclipsesource.glsp.api.model.ModelState;
 
 public class ModelUtil {
 	
-	public static String getModelId(ModelState modelState) {
-		return modelState == null ? null : getModelId(modelState.getCurrentModel());
+	public static String getModelId(ModelState<SModelRoot> modelState) {
+		return modelState == null ? null : getModelId(modelState.getRoot());
 	}
 
 	public static String getModelId(SModelRoot root) {

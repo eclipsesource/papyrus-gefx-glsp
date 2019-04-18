@@ -18,12 +18,17 @@ import org.eclipse.ui.PlatformUI;
 import com.eclipsesource.glsp.api.action.Action;
 import com.eclipsesource.glsp.api.action.kind.SaveModelAction;
 import com.eclipsesource.glsp.api.handler.ActionHandler;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.model.GraphicalModelState;
+import com.eclipsesource.glsp.api.model.ModelStateProvider;
 
 public class SaveModelHandler implements ActionHandler {
 
 	@Inject
 	private DiagramsSynchronizer synchronizer;
+	
+	@Inject
+	private ModelStateProvider modelStateProvider;
+	
 	private ThreadSynchronize threadSync;
 
 	public SaveModelHandler() {
@@ -36,14 +41,15 @@ public class SaveModelHandler implements ActionHandler {
 	}
 
 	@Override
-	public Optional<Action> execute(Action action, ModelState modelState) {
+	public Optional<Action> execute(String clientId, Action action) {
 		if (action instanceof SaveModelAction) {
-			threadSync.syncExec(() -> doSave(modelState));
+			modelStateProvider.getModelState(clientId).ifPresent(
+					state -> threadSync.syncExec(() -> doSave(state)));
 		}
 		return Optional.empty();
 	}
 	
-	private void doSave(ModelState modelState) {
+	private void doSave(GraphicalModelState modelState) {
 		for (IWorkbenchPage page : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages()) {
 			for (IEditorPart openEditor : page.getEditors()) {
 				if (openEditor instanceof IMultiDiagramEditor) {

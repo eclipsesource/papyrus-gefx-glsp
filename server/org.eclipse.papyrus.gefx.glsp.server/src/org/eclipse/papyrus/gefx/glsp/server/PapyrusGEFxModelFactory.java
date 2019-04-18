@@ -26,7 +26,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.eclipsesource.glsp.api.action.kind.RequestModelAction;
 import com.eclipsesource.glsp.api.factory.ModelFactory;
-import com.eclipsesource.glsp.api.utils.ModelOptions;
+import com.eclipsesource.glsp.api.utils.ClientOptions;
 import com.google.inject.Inject;
 
 public class PapyrusGEFxModelFactory implements ModelFactory {
@@ -48,7 +48,7 @@ public class PapyrusGEFxModelFactory implements ModelFactory {
 	
 	@Override
 	public SModelRoot loadModel(RequestModelAction action) {
-		String sourceURI = action.getOptions().get(ModelOptions.SOURCE_URI);
+		String sourceURI = action.getOptions().get(ClientOptions.SOURCE_URI);
 		try {
 			URI absoluteURI = URI.createURI(sourceURI);
 			String fileString = absoluteURI.toFileString();

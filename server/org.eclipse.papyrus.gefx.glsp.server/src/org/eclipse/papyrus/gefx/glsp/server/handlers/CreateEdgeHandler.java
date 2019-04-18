@@ -11,7 +11,7 @@ import org.eclipse.sprotty.SModelRoot;
 import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.CreateConnectionOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.model.GraphicalModelState;
 
 public class CreateEdgeHandler implements OperationHandler {
 
@@ -24,7 +24,7 @@ public class CreateEdgeHandler implements OperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction action, ModelState modelState) {
+	public Optional<SModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
 		// TODO Auto-generated method stub
 		
 		String modelId = ModelUtil.getModelId(modelState);

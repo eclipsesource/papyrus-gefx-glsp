@@ -1,5 +1,6 @@
 package org.eclipse.papyrus.gefx.glsp.server.handlers;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -25,7 +26,7 @@ import org.eclipse.sprotty.SModelRoot;
 import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.ChangeBoundsOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
-import com.eclipsesource.glsp.api.model.ModelState;
+import com.eclipsesource.glsp.api.model.GraphicalModelState;
 
 public class ChangeBoundsHandler implements OperationHandler {
 
@@ -38,11 +39,11 @@ public class ChangeBoundsHandler implements OperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction action, ModelState modelState) {
+	public Optional<SModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
 		if (action instanceof ChangeBoundsOperationAction) {
 			ChangeBoundsOperationAction cbAction = (ChangeBoundsOperationAction) action;
 			String modelId = ModelUtil.getModelId(modelState);
-			ElementAndBounds[] newBounds = cbAction.getNewBounds();
+			List<ElementAndBounds> newBounds = cbAction.getNewBounds();
 			IViewer viewer = gefSynchronizer.getViewer(modelId);
 			IRootPart<?> rootPart = viewer.getRootPart();
 			if (rootPart instanceof NotationDiagramRootPart) {
