@@ -51,5 +51,9 @@ yarn start
 
 ### Server
 
-There is currently no automated build for this project. The build process is similar to Papyrus-GEFx (Including the Java 11, E(fx)clipse 3.5.0 IDE & OpenJFX 11 requirements). This project adds 2 plug-ins on top of any (recent) Papyrus-GEFx installation: one to wrap pre-built Sprotty and GLSP-Server jars into an Eclipse Plug-in, and one to actually integrate Papyrus-GEFx and GLSP.
+```
+cd ~Git/papyrus-gefx-glsp/server
+mvn clean verify
+```
 
+The project currently doesn't provide any installable feature and can only be used from PDE
