@@ -1,6 +1,6 @@
 target "GEFx for Papyrus" with requirements source
 
-location "http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/2018-12" {
+location "http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/2019-03" {
 	/** Papyrus */
 	org.eclipse.papyrus.sdk.feature.feature.group [4.0.0,5.0.0)
 }
@@ -20,7 +20,7 @@ location "https://download.eclipse.org/efxclipse/runtime-released/3.5.0/site/" {
 	org.eclipse.fx.core [3.5.0,4.0.0)
 }
 
-location "http://download.eclipse.org/releases/2018-12" {
+location "http://download.eclipse.org/releases/2019-03" {
 	/** GEFx */
 	org.eclipse.gef.common.sdk.feature.group [5.0.0,6.0.0)
 	org.eclipse.gef.fx.sdk.feature.group [5.0.2,6.0.0)
@@ -44,4 +44,8 @@ location "http://download.eclipse.org/lsp4j/updates/releases/" {
 
 location "http://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository" {
 	javax.websocket
+}
+
+location "https://ci.eclipse.org/papyrus/job/Papyrus-GEFx-Integration/lastSuccessfulBuild/artifact/repository" {
+	org.eclipse.papyrus.gef4.feature.feature.group lazy
 }

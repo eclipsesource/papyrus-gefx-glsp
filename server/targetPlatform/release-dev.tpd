@@ -3,7 +3,7 @@ target "GEFx for Papyrus - Developers Platform" with requirements source
 include "release.tpd"
 
 
-location "http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/2018-12" {
+location "http://download.eclipse.org/modeling/mdt/papyrus/updates/releases/2019-03" {
 	org.eclipse.papyrus.gmfgenextension lazy
 }
 
