@@ -53,7 +53,6 @@ import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.CreateNodeOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
 import com.eclipsesource.glsp.api.model.GraphicalModelState;
-import com.eclipsesource.glsp.api.model.ModelState;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -146,7 +145,7 @@ public class CreateNodeOperationHandler implements OperationHandler {
 	// e.g. Class-as-Shape vs Class-as-ListItem).
 	// Reuse the palette to find all element types associated to the selected tool entry.
 	// This code must be consistent with GEFxOperationConfiguration
-	private Collection<String> getAllTypes(ModelState modelState, String type){
+	private Collection<String> getAllTypes(GraphicalModelState modelState, String type){
 		PaletteDescriptor paletteDescriptor = gefSynchronizer.getViewer(ModelUtil.getModelId(modelState))
 				.getAdapter(PaletteDescriptor.class);
 		ObservableList<Drawer> drawers = paletteDescriptor.getDrawers();

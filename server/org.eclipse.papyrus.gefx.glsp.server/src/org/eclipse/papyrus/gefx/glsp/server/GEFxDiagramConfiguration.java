@@ -27,11 +27,12 @@ import org.eclipse.sprotty.SLabel;
 import org.eclipse.sprotty.SModelElement;
 import org.eclipse.sprotty.SNode;
 
+import com.eclipsesource.glsp.api.diagram.DiagramConfiguration;
+import com.eclipsesource.glsp.api.operations.Operation;
 import com.eclipsesource.glsp.api.types.EdgeTypeHint;
 import com.eclipsesource.glsp.api.types.NodeTypeHint;
-import com.eclipsesource.glsp.server.AbstractDiagramManager;
 
-public class GEFxDiagramManager extends AbstractDiagramManager {
+public class GEFxDiagramConfiguration implements DiagramConfiguration {
 	
 	/**
 	 * The GEFx-GLSP Integration Diagram type
@@ -54,21 +55,28 @@ public class GEFxDiagramManager extends AbstractDiagramManager {
 	
 	@Override
 	public List<EdgeTypeHint> getEdgeTypeHints() {
-		return new ArrayList<>();
+		List<EdgeTypeHint> edgeHints = new ArrayList<>();
+		edgeHints.add(new EdgeTypeHint("edge", true, true, true, Arrays.asList("node", "comp"), Arrays.asList("node", "comp")));
+		return edgeHints;
 	}
 
 	@Override
 	public List<NodeTypeHint> getNodeTypeHints() {
 		ArrayList<NodeTypeHint> nodeHints = new ArrayList<>();
 		nodeHints.add(new NodeTypeHint("node", true, true, true, Arrays.asList("node", "comp")));
-		nodeHints.add(new NodeTypeHint("comp", false, false, false));
-		nodeHints.add(new NodeTypeHint("label", true, false, false));
+		nodeHints.add(new NodeTypeHint("comp", false, false, false, Arrays.asList("node")));
+		nodeHints.add(new NodeTypeHint("label", true, false, false, Arrays.asList("node")));
 		return nodeHints;
 	}
 
 	@Override
 	public String getDiagramType() {
 		return DIAGRAM_TYPE; // Single DiagramManager proxy for generic GEFx Diagrams
+	}
+
+	@Override
+	public List<Operation> getOperations() {
+		throw new UnsupportedOperationException("This method is not supported for the GEFx GLSP Server. Use "+RequestPaletteOperationsHandler.class.getName()+" instead");
 	}
 
 

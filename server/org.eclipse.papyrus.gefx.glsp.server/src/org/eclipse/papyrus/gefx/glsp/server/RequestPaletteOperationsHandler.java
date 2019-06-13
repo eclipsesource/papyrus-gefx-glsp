@@ -18,6 +18,7 @@ package org.eclipse.papyrus.gefx.glsp.server;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -27,25 +28,43 @@ import org.eclipse.papyrus.gef4.palette.PaletteDescriptor.Drawer;
 import org.eclipse.papyrus.gef4.palette.declarative.IdCreationTool;
 import org.eclipse.papyrus.gef4.palette.declarative.IdCreationTool.CreationKind;
 import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
+import org.eclipse.papyrus.gefx.glsp.server.helper.ModelUtil;
 
+import com.eclipsesource.glsp.api.action.Action;
 import com.eclipsesource.glsp.api.action.kind.RequestOperationsAction;
+import com.eclipsesource.glsp.api.action.kind.SetOperationsAction;
+import com.eclipsesource.glsp.api.model.GraphicalModelState;
 import com.eclipsesource.glsp.api.operations.Operation;
-import com.eclipsesource.glsp.api.operations.OperationConfiguration;
+import com.eclipsesource.glsp.server.actionhandler.AbstractActionHandler;
 
-import javafx.collections.ObservableList;
-
-public class GEFxOperationConfiguration implements OperationConfiguration {
+/**
+ * GEFx-GLSP Handler for {@link RequestOperationsAction}
+ * 
+ * Return a list of GLSP {@link Operation}s from the GEFx {@link PaletteDescriptor}.
+ * 
+ * @see RequestOperationsAction
+ * @see SetOperationsAction
+ */
+// We can't use the default RequestOperationsActionHandler because it relies on the 
+// parameter-less DiagramConfiguration#getOperations.
+// Our palettes depend on the current model state
+public class RequestPaletteOperationsHandler extends AbstractActionHandler {
 
 	@Inject
 	private DiagramsSynchronizer gefSynchronizer;
 	
 	@Override
-	public List<Operation> getOperations(RequestOperationsAction action) {
+	public boolean handles(Action action) {
+		return action instanceof RequestOperationsAction;
+	}
+	
+	@Override
+	protected Optional<Action> execute(Action action, GraphicalModelState modelState) {
 		List<Operation> paletteOperations = new ArrayList<>();
 
-		PaletteDescriptor paletteDescriptor = gefSynchronizer.getViewer(getModelId(action))
+		PaletteDescriptor paletteDescriptor = gefSynchronizer.getViewer(ModelUtil.getModelId(modelState))
 				.getAdapter(PaletteDescriptor.class);
-		ObservableList<Drawer> drawers = paletteDescriptor.getDrawers();
+		List<Drawer> drawers = paletteDescriptor.getDrawers();
 
 		for (Drawer drawer : drawers) {
 			for (ChildElement child : drawer.getChildren()) {
@@ -68,11 +87,7 @@ public class GEFxOperationConfiguration implements OperationConfiguration {
 			}
 		}
 
-		return paletteOperations;
-	}
-	
-	private String getModelId(RequestOperationsAction action) {
-		return gefSynchronizer.getModels().iterator().next();
+		return Optional.of(new SetOperationsAction(paletteOperations));
 	}
 
 	private Operation createAction(String label, String elementType, String kind) {

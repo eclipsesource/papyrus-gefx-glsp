@@ -50,6 +50,9 @@ public class DiagramsSynchronizer {
 	}
 	
 	public IViewer getViewer(String modelId) {
+		if (!handledDiagrams.containsKey(modelId)) {
+			throw new IllegalStateException("Requested viewer for ID: "+modelId+"; this viewer doesn't exist (Wrong ID, viewer disposed or not initialized?)"); 
+		}
 		return handledDiagrams.get(modelId).getViewer();
 	}
 

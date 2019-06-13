@@ -15,7 +15,6 @@
 	</properties>
 	
 	<modules>
-		<module>org.eclipse.glsp.server</module>
 		<module>org.eclipse.papyrus.gefx.glsp.server</module>
 	</modules>
 	
