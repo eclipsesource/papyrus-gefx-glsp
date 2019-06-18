@@ -37,15 +37,17 @@ import org.eclipse.papyrus.gef4.parts.ListCompartmentContentPart;
 import org.eclipse.papyrus.gef4.parts.NodeContentPart;
 import org.eclipse.papyrus.gef4.services.LabelService;
 import org.eclipse.papyrus.gefx.glsp.server.helper.ModelBuilder;
-import org.eclipse.sprotty.Dimension;
-import org.eclipse.sprotty.LayoutOptions;
-import org.eclipse.sprotty.Point;
-import org.eclipse.sprotty.SCompartment;
-import org.eclipse.sprotty.SEdge;
-import org.eclipse.sprotty.SLabel;
-import org.eclipse.sprotty.SModelElement;
-import org.eclipse.sprotty.SNode;
-import org.eclipse.sprotty.SPort;
+
+import com.eclipsesource.glsp.graph.GCompartment;
+import com.eclipsesource.glsp.graph.GDimension;
+import com.eclipsesource.glsp.graph.GEdge;
+import com.eclipsesource.glsp.graph.GLabel;
+import com.eclipsesource.glsp.graph.GLayoutOptions;
+import com.eclipsesource.glsp.graph.GModelElement;
+import com.eclipsesource.glsp.graph.GNode;
+import com.eclipsesource.glsp.graph.GPoint;
+import com.eclipsesource.glsp.graph.GraphFactory;
+import com.eclipsesource.glsp.server.util.GModelUtil;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -55,53 +57,60 @@ import javafx.scene.layout.Region;
 public class GEFModelBuilder implements ModelBuilder {
 
 	@Override
-	public SModelElement createElement(IVisualPart<?> gefPart) {
-		SModelElement result = doCreateElement(gefPart);
+	public GModelElement createElement(IVisualPart<?> gefPart) {
+		GModelElement result = doCreateElement(gefPart);
 
 		if (result == null) {
-			System.err.println("UNKNOWN PART: " + gefPart + ". Fallback to simple SNode");
-			result = new SNode();
+			System.err.println("UNKNOWN PART: " + gefPart + ". Fallback to simple GNode");
+			result = GraphFactory.eINSTANCE.createGNode();
+		}
+		
+		String id = getId(gefPart);
+		if (id != null) {
+			result.setId(id);
+		} else {
+			System.err.println("NO ID: "+gefPart);
 		}
 
 		return result;
 	}
 
 	@Override
-	public void refreshElement(IVisualPart<?> gefPart, SModelElement modelElement) {
+	public void refreshElement(IVisualPart<?> gefPart, GModelElement modelElement) {
 		String id = getId(gefPart);
 		if (id != null) {
 			modelElement.setId(id);
 		}
-		
-		if (modelElement instanceof SNode) {
-			refreshNode((SNode) modelElement, gefPart);
+
+		if (modelElement instanceof GNode) {
+			refreshNode((GNode) modelElement, gefPart);
 		}
 
-		if (modelElement instanceof SLabel) {
-			refreshLabel((SLabel) modelElement, gefPart);
+		if (modelElement instanceof GLabel) {
+			refreshLabel((GLabel) modelElement, gefPart);
 		}
 
-		if (modelElement instanceof SEdge) {
-			refreshConnection((SEdge) modelElement, gefPart);
+		if (modelElement instanceof GEdge) {
+			refreshConnection((GEdge) modelElement, gefPart);
 		}
-		
-		if (modelElement instanceof SCompartment) {
-			refreshCompartment((SCompartment) modelElement, gefPart);
+
+		if (modelElement instanceof GCompartment) {
+			refreshCompartment((GCompartment) modelElement, gefPart);
 		}
-		
+
 //		setType(modelElement, gefPart);
 	}
-	
-	private void refreshCompartment(SCompartment sCompartment, IVisualPart<?> gefPart) {
+
+	private void refreshCompartment(GCompartment sCompartment, IVisualPart<?> gefPart) {
 		if (gefPart instanceof CompartmentContentPart) {
-			LayoutOptions layoutOptions = new LayoutOptions();
+			GLayoutOptions layoutOptions = GraphFactory.eINSTANCE.createGLayoutOptions();
 			if (gefPart instanceof ListCompartmentContentPart) {
 				sCompartment.setLayout("vbox");
 				layoutOptions.setHAlign("left");
 			}
 			layoutOptions.setResizeContainer(true);
 			if (gefPart.getVisual() instanceof Region) {
-				Region region = (Region)gefPart.getVisual();
+				Region region = (Region) gefPart.getVisual();
 				Insets padding = region.getPadding();
 				if (padding != null) {
 					setPaddingIfSet(layoutOptions::setPaddingLeft, padding::getLeft);
@@ -114,7 +123,7 @@ public class GEFModelBuilder implements ModelBuilder {
 			sCompartment.setLayoutOptions(layoutOptions);
 		}
 	}
-	
+
 	private void setPaddingIfSet(Consumer<Double> setter, Supplier<Double> getter) {
 		Double value = getter.get();
 		if (value > 0) {
@@ -132,115 +141,129 @@ public class GEFModelBuilder implements ModelBuilder {
 		return null;
 	}
 
-	private void refreshNode(SNode modelElement, IVisualPart<?> gefPart) {
+	private void refreshNode(GNode modelElement, IVisualPart<?> gefPart) {
 		Node visual = gefPart.getVisual();
 		if (visual == null || visual.getParent() == null) {
 			return;
 		}
-		
+
 		modelElement.setLayout("vbox");
-		LayoutOptions layout = new LayoutOptions();
-		//layout.setVGap(1.);
+		GLayoutOptions layout = GraphFactory.eINSTANCE.createGLayoutOptions();
+		// layout.setVGap(1.);
 		layout.setResizeContainer(false);
 		modelElement.setLayoutOptions(layout);
-		
+
 		Bounds boundsInParent = visual.getBoundsInParent();
-		modelElement.setPosition(new Point(boundsInParent.getMinX(), boundsInParent.getMinY()));
-		modelElement.setSize(new Dimension(boundsInParent.getWidth(), boundsInParent.getHeight()));
+		modelElement.setPosition(GModelUtil.point(boundsInParent.getMinX(), boundsInParent.getMinY()));
+
+		GDimension dimension = GraphFactory.eINSTANCE.createGDimension();
+		dimension.setWidth(boundsInParent.getWidth());
+		dimension.setHeight(boundsInParent.getHeight());
+		modelElement.setSize(dimension);
 	}
 
-	private SModelElement doCreateElement(IVisualPart<?> gefPart) {
+	private GModelElement doCreateElement(IVisualPart<?> gefPart) {
 		if (gefPart instanceof CompartmentContentPart) {
-			return new SCompartment();
+			return GraphFactory.eINSTANCE.createGCompartment();
 		}
 		if (gefPart instanceof LabelContentPart) {
-			return new SLabel();
+			return GraphFactory.eINSTANCE.createGLabel();
 		}
 		if (gefPart instanceof ConnectionContentPart) {
-			return new SEdge();
+			return GraphFactory.eINSTANCE.createGEdge();
 		}
 		if (gefPart instanceof NodeContentPart) {
 			if (((NodeContentPart<?>) gefPart).getLocator() != null) {
-				return new SPort();
+				return GraphFactory.eINSTANCE.createGPort();
 			}
-			return new SNode();
+			return GraphFactory.eINSTANCE.createGNode();
 		}
 
 		return null;
 	}
 
-	private void refreshConnection(SEdge modelElement, IVisualPart<?> gefPart) {
+	private void refreshConnection(GEdge modelElement, IVisualPart<?> gefPart) {
 		if (gefPart instanceof ConnectionContentPart) {
-			ConnectionContentPart<?> connection = (ConnectionContentPart<?>)gefPart;
+			ConnectionContentPart<?> connection = (ConnectionContentPart<?>) gefPart;
 			// Source & Target, Anchors
 			Connection gefVisual = connection.getConnection();
-			
+
 			Node sourceNode = gefVisual.getStartAnchor().getAnchorage();
 			Node targetNode = gefVisual.getEndAnchor().getAnchorage();
-			
+
 			IViewer viewer = gefPart.getViewer();
 			IVisualPart<?> sourcePart = viewer.getVisualPartMap().get(sourceNode);
 			modelElement.setSourceId(getId(sourcePart));
 			IVisualPart<?> targetPart = viewer.getVisualPartMap().get(targetNode);
 			modelElement.setTargetId(getId(targetPart));
-			
-			modelElement.setRoutingPoints(geometryToSprotty(connection.getContentBendPoints()));
+
+			modelElement.getRoutingPoints().clear(); // TODO Verify
+			modelElement.getRoutingPoints().addAll(geometryToGraph(connection.getContentBendPoints()));
 		}
 	}
 
-	private List<Point> geometryToSprotty(List<BendPoint> contentBendPoints) {
-		List<Point> result = new ArrayList<>();
+	private List<GPoint> geometryToGraph(List<BendPoint> contentBendPoints) {
+		List<GPoint> result = new ArrayList<>();
 		for (BendPoint bendpoint : contentBendPoints) {
-			result.add(geometryToSprotty(bendpoint.getPosition()));
+			result.add(geometryToGraph(bendpoint.getPosition()));
 		}
-		return result.isEmpty() ? null : result;
+		return result;
 	}
 
-	private Point geometryToSprotty(org.eclipse.gef.geometry.planar.Point startPoint) {
-		return new Point(startPoint.x(), startPoint.y());
+	private GPoint geometryToGraph(org.eclipse.gef.geometry.planar.Point startPoint) {
+		return GModelUtil.point(startPoint.x(), startPoint.y());
 	}
 
-	private void refreshLabel(SLabel modelElement, IVisualPart<?> gefPart) {
+	private void refreshLabel(GLabel modelElement, IVisualPart<?> gefPart) {
 		setLabel(modelElement, gefPart);
 		if (gefPart.getParent() instanceof ConnectionContentPart) {
 			refreshConnectionLabel(modelElement, gefPart);
 		}
 	}
 
-	private void refreshConnectionLabel(SLabel modelElement, IVisualPart<?> labelPart) {
+	private void refreshConnectionLabel(GLabel modelElement, IVisualPart<?> labelPart) {
 		Node visual = labelPart.getVisual();
 		Bounds boundsInParent = visual.getBoundsInParent();
-		modelElement.setPosition(new Point(boundsInParent.getMinX(), boundsInParent.getMinY()));
-		modelElement.setSize(new Dimension(boundsInParent.getWidth(), boundsInParent.getHeight()));
-		//modelElement.setEdgePlacement(EdgePlacement.);
+		modelElement.setPosition(GModelUtil.point(boundsInParent.getMinX(), boundsInParent.getMinY()));
+
+		GDimension dimension = GraphFactory.eINSTANCE.createGDimension();
+		dimension.setWidth(boundsInParent.getWidth());
+		dimension.setHeight(boundsInParent.getHeight());
+		modelElement.setSize(dimension);
+		// modelElement.setEdgePlacement(EdgePlacement.);
 	}
 
-	// Unused for now; because the client only supports generic types (Node, Edge, Label, Comp).
-	// We should probably add a new notationType property rather than reuse the generic type,
-	// since we will be communicating with a generic client that can only understand the generic
+	// Unused for now; because the client only supports generic types (Node, Edge,
+	// Label, Comp).
+	// We should probably add a new notationType property rather than reuse the
+	// generic type,
+	// since we will be communicating with a generic client that can only understand
+	// the generic
 	// type.
-	private void setType(SModelElement sElement, IVisualPart<?> gefPart) {
+	@SuppressWarnings("unused")
+	private void setType(GModelElement sElement, IVisualPart<?> gefPart) {
 		if (gefPart instanceof BaseContentPart) {
 			Object content = ((BaseContentPart<?, ?>) gefPart).getContent();
 			if (content instanceof View) {
 				String type = ((View) content).getType();
-				String mainType = sElement.getType();
-				int separatorIndex = mainType.indexOf(":");
-				if (separatorIndex > 0) {
-					mainType = mainType.substring(0, separatorIndex);
-				}
-				sElement.setType(mainType+":"+type);
+				System.err.println("TODO Handle types");
+//				String mainType = sElement.getType();
+//				int separatorIndex = mainType.indexOf(":");
+//				if (separatorIndex > 0) {
+//					mainType = mainType.substring(0, separatorIndex);
+//				}
+//				sElement.setType(mainType+":"+type);
 			}
 		}
 	}
 
-	private void setLabel(SModelElement sElement, IVisualPart<?> gefPart) {
-		if (sElement instanceof SLabel && gefPart instanceof AbstractLabelContentPart) {
+	private void setLabel(GModelElement sElement, IVisualPart<?> gefPart) {
+		if (sElement instanceof GLabel && gefPart instanceof AbstractLabelContentPart) {
 			LabelService labelService = ((AbstractLabelContentPart<?, ?>) gefPart).getAdapter(LabelService.class);
 			if (labelService != null) {
 				// Label
 				String text = labelService.getText();
-				((SLabel) sElement).setText(text == null ? "" : text);
+				((GLabel) sElement).setText(text == null ? "" : text);
 			}
 		}
 	}

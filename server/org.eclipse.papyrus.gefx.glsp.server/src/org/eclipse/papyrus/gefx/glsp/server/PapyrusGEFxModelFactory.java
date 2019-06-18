@@ -33,7 +33,6 @@ import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
 import org.eclipse.papyrus.infra.core.sashwindows.di.service.IPageManager;
 import org.eclipse.papyrus.infra.core.services.ServiceException;
 import org.eclipse.papyrus.infra.ui.editor.IMultiDiagramEditor;
-import org.eclipse.sprotty.SModelRoot;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -42,18 +41,16 @@ import org.eclipse.ui.PlatformUI;
 import com.eclipsesource.glsp.api.action.kind.RequestModelAction;
 import com.eclipsesource.glsp.api.factory.ModelFactory;
 import com.eclipsesource.glsp.api.utils.ClientOptions;
+import com.eclipsesource.glsp.graph.GModelRoot;
 import com.google.inject.Inject;
 
 public class PapyrusGEFxModelFactory implements ModelFactory {
 
 	private static Logger LOGGER = Logger.getLogger(PapyrusGEFxModelFactory.class);
-
-//	@Inject
-//	private ModelTypeConfigurationProvider modelTypeConfigurationProvider;
 	
 	@Inject
 	DiagramsSynchronizer gefSynchronizer;
-
+	
 	private ThreadSynchronize threadSync;
 	
 	@Inject
@@ -62,7 +59,7 @@ public class PapyrusGEFxModelFactory implements ModelFactory {
 	}
 	
 	@Override
-	public SModelRoot loadModel(RequestModelAction action) {
+	public GModelRoot loadModel(RequestModelAction action) {
 		String sourceURI = action.getOptions().get(ClientOptions.SOURCE_URI);
 		try {
 			URI absoluteURI = URI.createURI(sourceURI);
@@ -77,10 +74,11 @@ public class PapyrusGEFxModelFactory implements ModelFactory {
 				IViewer viewer = gefViewer.get(10, TimeUnit.SECONDS);
 				System.err.println("Viewer will be used");
 				String modelId = gefSynchronizer.init(viewer, new GEFModelBuilder(), threadSync);
-				Thread.sleep(3000);
+				Thread.sleep(2000);
 				System.err.println("Model factory: model is ready; do return");
 				gefSynchronizer.refresh(modelId);
-				SModelRoot modelRoot = gefSynchronizer.getModel(modelId);
+				GModelRoot modelRoot = gefSynchronizer.getModel(modelId);
+				
 				LOGGER.info("Opening model: "+modelRoot);
 				return modelRoot;
 			}

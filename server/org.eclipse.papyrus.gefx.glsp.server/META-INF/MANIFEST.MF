@@ -6,8 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse Modeling Project
 Automatic-Module-Name: org.eclipse.papyrus.gefx.glsp.server
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.eclipse.glsp.server;bundle-version="1.0.0";visibility:=reexport,
- org.eclipse.ui;bundle-version="3.110.0",
+Require-Bundle: org.eclipse.ui;bundle-version="3.110.0",
  org.eclipse.gef.mvc.fx,
  org.eclipse.gef.common;bundle-version="5.0.0",
  org.eclipse.fx.core,
@@ -22,7 +21,10 @@ Require-Bundle: org.eclipse.glsp.server;bundle-version="1.0.0";visibility:=reexp
  org.eclipse.papyrus.infra.services.openelement,
  org.eclipse.papyrus.infra.gefdiag.common,
  org.eclipse.papyrus.infra.emf,
- org.eclipse.papyrus.gefx.e3
+ org.eclipse.papyrus.gefx.e3,
+ com.eclipsesource.glsp.api;bundle-version="1.2.0",
+ com.eclipsesource.glsp.server;bundle-version="1.2.0",
+ com.eclipsesource.glsp.graph;bundle-version="1.2.0"
 Export-Package: org.eclipse.papyrus.gefx.glsp.server,
  org.eclipse.papyrus.gefx.glsp.server.common,
  org.eclipse.papyrus.gefx.glsp.server.handlers,

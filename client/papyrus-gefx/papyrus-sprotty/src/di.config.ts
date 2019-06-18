@@ -33,6 +33,7 @@ import {
     glspMouseToolModule,
     glspSelectModule,
     hoverModule,
+    layoutCommandsModule,
     LogLevel,
     modelHintsModule,
     modelSourceModule,
@@ -72,17 +73,8 @@ const GEFxDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =>
     configureModelElement(context, 'node', SNode, NodeView);
     configureModelElement(context, 'label', SLabel, SLabelView);
     configureModelElement(context, 'port', SPort, NodeView);
-    // configureModelElement(context, 'label:text', SLabel, SLabelView);
     configureModelElement(context, 'comp', SCompartment, SCompartmentView);
-    // configureModelElement(context, 'comp:header', SCompartment, SCompartmentView);
-    // configureModelElement(context, 'label:icon', SLabel, SLabelView);
-    // configureModelElement(context, 'html', HtmlRoot, HtmlRootView);
-    // configureModelElement(context, 'pre-rendered', PreRenderedElement, PreRenderedView);
-    // configureModelElement(context, 'button:expand', SButton, ExpandButtonView);
-    // configureModelElement(context, 'routing-point', SRoutingHandle, SRoutingHandleView);
-    // configureModelElement(context, 'volatile-routing-point', SRoutingHandle, SRoutingHandleView);
     configureModelElement(context, 'edge', SEdge, PolylineEdgeView);
-    // configureModelElement(context, 'node', RectangularNode, RectangularNodeView)
 });
 
 export default function createContainer(widgetId: string): Container {
@@ -91,11 +83,10 @@ export default function createContainer(widgetId: string): Container {
     container.load(decorationModule, validationModule, defaultModule, glspMouseToolModule, defaultGLSPModule, glspSelectModule, boundsModule, viewportModule,
         hoverModule, fadeModule, exportModule, expandModule, openModule, buttonModule, modelSourceModule,
         GEFxDiagramModule, saveModule, executeCommandModule, toolFeedbackModule, modelHintsModule,
-        commandPaletteModule, glspCommandPaletteModule, paletteModule, requestResponseModule, routingModule, edgeLayoutModule);
+        commandPaletteModule, glspCommandPaletteModule, paletteModule, requestResponseModule, routingModule, edgeLayoutModule,
+        layoutCommandsModule);
 
     overrideViewerOptions(container, {
-        needsClientLayout: true,
-        needsServerLayout: false,
         baseDiv: widgetId,
         hiddenDiv: widgetId + "_hidden"
     });

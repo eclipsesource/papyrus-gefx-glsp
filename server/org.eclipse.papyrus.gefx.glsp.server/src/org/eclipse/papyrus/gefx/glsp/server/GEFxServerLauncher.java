@@ -30,12 +30,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import com.eclipsesource.glsp.server.ServerLauncher;
+import com.eclipsesource.glsp.server.launch.DefaultGLSPServerLauncher;
 import com.google.inject.Guice;
 
 public class GEFxServerLauncher extends AbstractHandler {
 
-	private static ServerLauncher launcher;
+	private static DefaultGLSPServerLauncher launcher;
 
 	@Override
 	public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
@@ -68,7 +68,7 @@ public class GEFxServerLauncher extends AbstractHandler {
 	
 	private void stopServer() throws ExecutionException {
 		try {
-			launcher.stop();
+			launcher.shutdown();
 			launcher = null;
 		} catch (Exception ex) {
 			throw new ExecutionException("An error occurred when trying to stop the server", ex);
@@ -84,8 +84,8 @@ public class GEFxServerLauncher extends AbstractHandler {
 		Job job = Job.create("GLSP Server", monitor -> {
 			try {
 				// Run in a Job to make sure the server can be stopped when we stop Eclipse
-				launcher = new ServerLauncher("localhost", 5007, module);
-				Future<Void> onClose = launcher.asyncRun(); // This will return quickly
+				launcher = new DefaultGLSPServerLauncher(module);
+				Future<Void> onClose = launcher.asyncRun("localhost", 5007); // This will return quickly
 				
 				String startMsg = isRestart ? "restarted" : "started";
 				String title = String.format("Server %s", startMsg);

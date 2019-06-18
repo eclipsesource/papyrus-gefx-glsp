@@ -27,6 +27,7 @@ import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
 import org.eclipse.papyrus.gefx.glsp.server.helper.ModelUtil;
 import org.eclipse.papyrus.infra.ui.editor.IMultiDiagramEditor;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -66,7 +67,8 @@ public class SaveModelHandler implements ActionHandler {
 	
 	private void doSave(GraphicalModelState modelState) {
 		for (IWorkbenchPage page : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPages()) {
-			for (IEditorPart openEditor : page.getEditors()) {
+			for (IEditorReference editorReference : page.getEditorReferences()) {
+				IEditorPart openEditor = editorReference.getEditor(false); // The server only works with the current session, so if the editor needs to be restored, it's not our editor
 				if (openEditor instanceof IMultiDiagramEditor) {
 					IMultiDiagramEditor editor = (IMultiDiagramEditor)openEditor;
 					IEditorPart activeEditor = editor.getActiveEditor();
