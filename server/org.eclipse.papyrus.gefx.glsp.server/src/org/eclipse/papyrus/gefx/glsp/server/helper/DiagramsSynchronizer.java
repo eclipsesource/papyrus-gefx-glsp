@@ -29,8 +29,9 @@ import org.eclipse.fx.core.ThreadSynchronize;
 import org.eclipse.gef.mvc.fx.parts.IRootPart;
 import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.papyrus.gefx.glsp.server.GEFModelBuilder;
-import org.eclipse.sprotty.SModelRoot;
 import org.eclipse.swt.widgets.Display;
+
+import com.eclipsesource.glsp.graph.GModelRoot;
 
 import javafx.scene.Node;
 
@@ -40,7 +41,7 @@ public class DiagramsSynchronizer {
 	
 	private final ListenerList<GraphListener> listeners = new ListenerList<>();
 	
-	public SModelRoot getModel(String modelId) {
+	public GModelRoot getModel(String modelId) {
 		return handledDiagrams.get(modelId).getModel();
 	}
 	
@@ -67,7 +68,7 @@ public class DiagramsSynchronizer {
 			System.err.println("Waiting until model is initialized");
 			GEFToGraphSynchronizer.GraphListener initializationListener = new GEFToGraphSynchronizer.GraphListener() {
 				@Override
-				public void graphChanged(SModelRoot graph) {
+				public void graphChanged(GModelRoot graph) {
 					System.err.println("Graph changed (init)");
 					getModelId(viewer).ifPresent(id -> {
 						System.err.println("Id was set; model is ready");
@@ -127,7 +128,7 @@ public class DiagramsSynchronizer {
 	}
 	
 	public static interface GraphListener {
-		void graphChanged(String modelId, SModelRoot graph);
+		void graphChanged(String modelId, GModelRoot graph);
 	}
 
 	public Collection<String> getModels() {

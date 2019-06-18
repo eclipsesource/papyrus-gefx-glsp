@@ -46,13 +46,13 @@ import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
 import org.eclipse.papyrus.gefx.glsp.server.helper.ModelUtil;
 import org.eclipse.papyrus.infra.emf.gmf.command.GMFtoEMFCommandWrapper;
 import org.eclipse.papyrus.infra.emf.utils.EMFHelper;
-import org.eclipse.sprotty.Point;
-import org.eclipse.sprotty.SModelRoot;
 
 import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.CreateNodeOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
 import com.eclipsesource.glsp.api.model.GraphicalModelState;
+import com.eclipsesource.glsp.graph.GModelRoot;
+import com.eclipsesource.glsp.graph.GPoint;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -70,7 +70,7 @@ public class CreateNodeOperationHandler implements OperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
+	public Optional<GModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
 		CreateNodeOperationAction createAction = (CreateNodeOperationAction)action;
 		
 		String modelId = ModelUtil.getModelId(modelState);
@@ -84,7 +84,7 @@ public class CreateNodeOperationHandler implements OperationHandler {
 			
 			String containerId = createAction.getContainerId();
 			String elementTypeId = createAction.getElementTypeId();
-			Point location = createAction.getLocation();
+			GPoint location = createAction.getLocation();
 
 			// XXX Workaround: the GEFx CreateNodeHandler is not smart enough yet, and will
 			// never delegate to the appropriate parent when the specified container is incorrect
@@ -122,7 +122,7 @@ public class CreateNodeOperationHandler implements OperationHandler {
 					if (command != null && command.canExecute()) {
 						editingDomain.getCommandStack().execute(new GMFtoEMFCommandWrapper(command));
 						gefSynchronizer.refresh(modelId);
-						SModelRoot result = gefSynchronizer.getModel(modelId);
+						GModelRoot result = gefSynchronizer.getModel(modelId);
 						return Optional.of(result);
 					} else {
 						log.warn("Command is not executable. Resolved Container: "+parentPart+"; element type: "+elementTypeId);
@@ -133,7 +133,7 @@ public class CreateNodeOperationHandler implements OperationHandler {
 		return Optional.empty();
 	}
 	
-	private Point2D getLocationInParent(IContentPart<?> parent, Point locationInScene) {
+	private Point2D getLocationInParent(IContentPart<?> parent, GPoint locationInScene) {
 		Point2D result = new Point2D(locationInScene.getX(), locationInScene.getY());
 		result = parent.getVisual().sceneToLocal(result);
 		return result;

@@ -21,12 +21,12 @@ import javax.inject.Inject;
 
 import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
 import org.eclipse.papyrus.gefx.glsp.server.helper.ModelUtil;
-import org.eclipse.sprotty.SModelRoot;
 
 import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.CreateConnectionOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
 import com.eclipsesource.glsp.api.model.GraphicalModelState;
+import com.eclipsesource.glsp.graph.GModelRoot;
 
 public class CreateEdgeHandler implements OperationHandler {
 
@@ -39,7 +39,7 @@ public class CreateEdgeHandler implements OperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
+	public Optional<GModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
 		// TODO Auto-generated method stub
 		
 		String modelId = ModelUtil.getModelId(modelState);

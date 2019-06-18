@@ -34,14 +34,14 @@ import org.eclipse.papyrus.gef4.gmf.parts.NotationDiagramRootPart;
 import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
 import org.eclipse.papyrus.gefx.glsp.server.helper.ModelUtil;
 import org.eclipse.papyrus.infra.emf.utils.EMFHelper;
-import org.eclipse.sprotty.Bounds;
-import org.eclipse.sprotty.ElementAndBounds;
-import org.eclipse.sprotty.SModelRoot;
 
 import com.eclipsesource.glsp.api.action.kind.AbstractOperationAction;
 import com.eclipsesource.glsp.api.action.kind.ChangeBoundsOperationAction;
 import com.eclipsesource.glsp.api.handler.OperationHandler;
 import com.eclipsesource.glsp.api.model.GraphicalModelState;
+import com.eclipsesource.glsp.api.types.ElementAndBounds;
+import com.eclipsesource.glsp.graph.GBounds;
+import com.eclipsesource.glsp.graph.GModelRoot;
 
 public class ChangeBoundsHandler implements OperationHandler {
 
@@ -54,7 +54,7 @@ public class ChangeBoundsHandler implements OperationHandler {
 	}
 
 	@Override
-	public Optional<SModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
+	public Optional<GModelRoot> execute(AbstractOperationAction action, GraphicalModelState modelState) {
 		if (action instanceof ChangeBoundsOperationAction) {
 			ChangeBoundsOperationAction cbAction = (ChangeBoundsOperationAction) action;
 			String modelId = ModelUtil.getModelId(modelState);
@@ -72,7 +72,7 @@ public class ChangeBoundsHandler implements OperationHandler {
 					protected void doExecute() {
 						for (ElementAndBounds moveOperation : newBounds) {
 							String elementId = moveOperation.getElementId();
-							Bounds bounds = moveOperation.getNewBounds();
+							GBounds bounds = moveOperation.getNewBounds();
 							EObject notationElement = modelRoot.eResource().getEObject(elementId);
 							// IContentPart<?> contentPart =
 							// viewer.getContentPartMap().get(notationElement);

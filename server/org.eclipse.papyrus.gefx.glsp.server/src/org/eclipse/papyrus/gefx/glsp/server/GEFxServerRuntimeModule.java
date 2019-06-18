@@ -28,6 +28,7 @@ import org.eclipse.papyrus.gefx.glsp.server.handlers.SaveModelHandler;
 import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
 
 import com.eclipsesource.glsp.api.diagram.DiagramConfiguration;
+import com.eclipsesource.glsp.api.factory.GraphGsonConfiguratorFactory;
 import com.eclipsesource.glsp.api.factory.ModelFactory;
 import com.eclipsesource.glsp.api.factory.PopupModelFactory;
 import com.eclipsesource.glsp.api.handler.ActionHandler;
@@ -38,7 +39,7 @@ import com.eclipsesource.glsp.api.model.ModelSelectionListener;
 import com.eclipsesource.glsp.api.provider.CommandPaletteActionProvider;
 import com.eclipsesource.glsp.server.actionhandler.CollapseExpandActionHandler;
 import com.eclipsesource.glsp.server.actionhandler.ComputedBoundsActionHandler;
-import com.eclipsesource.glsp.server.actionhandler.ExecuteServerCommandActionHandler;
+import com.eclipsesource.glsp.server.actionhandler.LayoutActionHandler;
 import com.eclipsesource.glsp.server.actionhandler.OpenActionHandler;
 import com.eclipsesource.glsp.server.actionhandler.OperationActionHandler;
 import com.eclipsesource.glsp.server.actionhandler.RequestCommandPaletteActionsHandler;
@@ -56,6 +57,11 @@ public class GEFxServerRuntimeModule extends DefaultGLSPModule {
 	protected DiagramsSynchronizer bindSynchronizer() {
 		return new DiagramsSynchronizer();
 	}
+	
+	@Override
+	protected Class<? extends GraphGsonConfiguratorFactory> bindGraphGsonConfiguratorFactory() {
+		return GEFxGsonConfiguratorFactory.class;
+	}
 
 	@Override
 	protected Collection<Class<? extends DiagramConfiguration>> bindDiagramConfigurations() {
@@ -69,7 +75,7 @@ public class GEFxServerRuntimeModule extends DefaultGLSPModule {
 
 	@Override
 	public Class<? extends PopupModelFactory> bindPopupModelFactory() {
-		return GEFxPopupFactory.class;
+		return PopupModelFactory.NullImpl.class;
 	}
 
 	@Override
@@ -111,14 +117,19 @@ public class GEFxServerRuntimeModule extends DefaultGLSPModule {
 				OpenActionHandler.class,
 				OperationActionHandler.class,
 				RequestModelActionHandler.class,
-				RequestPaletteOperationsHandler.class,
+				// RequestOperationsActionHandler.class, // Customized
 				RequestPopupModelActionHandler.class,
+				// SaveModelActionHandler.class, // Customized below 
 				SelectActionHandler.class,
-				ExecuteServerCommandActionHandler.class,
+//				RequestPopupModelActionHandler.class, // Unused
+//				ExecuteServerCommandActionHandler.class, // Unused
 				RequestTypeHintsActionHandler.class,
 				RequestCommandPaletteActionsHandler.class,
-				
+//				RequestMarkersHandler.class, // Unused
+				LayoutActionHandler.class,
+
 				// Custom
+				RequestPaletteOperationsHandler.class,
 				SaveModelHandler.class
 		);
 	}

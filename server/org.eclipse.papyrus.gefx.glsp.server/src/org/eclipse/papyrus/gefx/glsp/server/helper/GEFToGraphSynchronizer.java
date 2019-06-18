@@ -31,8 +31,10 @@ import org.eclipse.gef.mvc.fx.viewer.IViewer;
 import org.eclipse.gmf.runtime.notation.Diagram;
 import org.eclipse.papyrus.gef4.gmf.parts.NotationDiagramRootPart;
 import org.eclipse.papyrus.gefx.glsp.server.common.CleanedDisposeableCollector;
-import org.eclipse.sprotty.SModelElement;
-import org.eclipse.sprotty.SModelRoot;
+
+import com.eclipsesource.glsp.graph.GModelElement;
+import com.eclipsesource.glsp.graph.GModelRoot;
+import com.eclipsesource.glsp.graph.GraphFactory;
 
 import javafx.collections.ListChangeListener;
 import javafx.collections.ListChangeListener.Change;
@@ -125,7 +127,7 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		}
 	}
 
-	public SModelRoot getModel() {
+	public GModelRoot getModel() {
 		while (isDirty.get() || isRefreshing.get()) {
 			try {
 				Thread.sleep(50);
@@ -134,12 +136,12 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 			}
 		}
 		threadSync.syncExec(() -> {});
-		SModelRoot model = internalGetModel();
+		GModelRoot model = internalGetModel();
 //		System.out.println(model);
 		return model;
 	}
 
-	private SModelRoot internalGetModel() {
+	private GModelRoot internalGetModel() {
 		return this.treeRoot.getElement();
 	}
 
@@ -152,7 +154,7 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		}
 	}
 
-	protected abstract class TreeBranch<SMODEL extends SModelElement> extends CleanedDisposeableCollector {
+	protected abstract class TreeBranch<SMODEL extends GModelElement> extends CleanedDisposeableCollector {
 
 		private final SMODEL modelElement;
 
@@ -226,11 +228,12 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		}
 
 		protected void refreshChildren(List<? extends IVisualPart<?>> children) {
-			List<SModelElement> childElements = new ArrayList<>();
+			List<GModelElement> childElements = new ArrayList<>();
 			for (IVisualPart<?> childPart : children) {
 				childElements.add(childBranches.get(childPart).getElement());
 			}
-			modelElement.setChildren(childElements);
+			modelElement.getChildren().clear();
+			modelElement.getChildren().addAll(childElements);
 		}
 
 		public void refresh() {
@@ -241,7 +244,7 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		}
 	}
 
-	public class ContentBranch extends TreeBranch<SModelElement> {
+	public class ContentBranch extends TreeBranch<GModelElement> {
 
 		public ContentBranch(IVisualPart<?> part) {
 			super(part);
@@ -253,13 +256,13 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		}
 
 		@Override
-		public SModelElement createElement(IVisualPart<?> part) {
+		public GModelElement createElement(IVisualPart<?> part) {
 			return modelBuilder.createElement(part);
 		}
 
 	}
 
-	public class TreeRoot extends TreeBranch<SModelRoot> {
+	public class TreeRoot extends TreeBranch<GModelRoot> {
 
 		private int revision;
 
@@ -275,8 +278,8 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		}
 
 		@Override
-		public SModelRoot createElement(IVisualPart<?> part) {
-			SModelRoot sModelRoot = new SModelRoot();
+		public GModelRoot createElement(IVisualPart<?> part) {
+			GModelRoot sModelRoot = GraphFactory.eINSTANCE.createGModelRoot();
 			String id;
 			if (part instanceof NotationDiagramRootPart) {
 				Diagram modelRoot = ((NotationDiagramRootPart) part).getModelRoot();
@@ -291,12 +294,13 @@ class GEFToGraphSynchronizer extends CleanedDisposeableCollector {
 		@Override
 		public void refresh() {
 			super.refresh();
-			internalGetModel().setRevision(revision++);
+			System.err.println("FIXME Workaround skip revision increment");
+			// internalGetModel().setRevision(revision++);
 		}
 
 	}
 
 	public static interface GraphListener {
-		void graphChanged(SModelRoot graph);
+		void graphChanged(GModelRoot graph);
 	}
 }

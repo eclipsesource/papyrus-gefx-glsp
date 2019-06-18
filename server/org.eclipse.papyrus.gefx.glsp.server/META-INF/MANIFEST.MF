@@ -22,8 +22,9 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.110.0",
  org.eclipse.papyrus.infra.gefdiag.common,
  org.eclipse.papyrus.infra.emf,
  org.eclipse.papyrus.gefx.e3,
- com.eclipsesource.glsp.api;bundle-version="1.1.0",
- com.eclipsesource.glsp.server;bundle-version="1.1.0"
+ com.eclipsesource.glsp.api;bundle-version="1.2.0",
+ com.eclipsesource.glsp.server;bundle-version="1.2.0",
+ com.eclipsesource.glsp.graph;bundle-version="1.2.0"
 Export-Package: org.eclipse.papyrus.gefx.glsp.server,
  org.eclipse.papyrus.gefx.glsp.server.common,
  org.eclipse.papyrus.gefx.glsp.server.handlers,

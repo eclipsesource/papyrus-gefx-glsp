@@ -22,18 +22,19 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.eclipse.papyrus.gefx.glsp.server.helper.DiagramsSynchronizer;
-import org.eclipse.sprotty.SModelRoot;
 
 import com.eclipsesource.glsp.api.provider.CommandPaletteActionProvider;
 import com.eclipsesource.glsp.api.types.LabeledAction;
+import com.eclipsesource.glsp.graph.GModelRoot;
 
 public class GEFxCommandPaletteActionProvider implements CommandPaletteActionProvider {
 
+	@SuppressWarnings("unused")
 	@Inject
 	private DiagramsSynchronizer gefSynchronizer;
 	
 	@Override
-	public Set<LabeledAction> getActions(SModelRoot root, List<String> selectedElementsIds) {
+	public Set<LabeledAction> getActions(GModelRoot root, List<String> selectedElementsIds) {
 		return new HashSet<>(); //Ctrl+Space Command Actions
 	}
 
