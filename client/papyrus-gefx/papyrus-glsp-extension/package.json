@@ -15,11 +15,11 @@
   },
   "dependencies": {
     "@glsp/theia-integration": "next",
-    "@theia/core": "^0.5.0",
-    "@theia/editor": "^0.5.0",
-    "@theia/filesystem": "^0.5.0",
-    "@theia/languages": "^0.5.0",
-    "@theia/monaco": "^0.5.0",
+    "@theia/core": "^0.7.1",
+    "@theia/editor": "^0.7.1",
+    "@theia/filesystem": "^0.7.1",
+    "@theia/languages": "^0.7.1",
+    "@theia/monaco": "^0.7.1",
     "@types/node": "^8.0.14",
     "papyrus-sprotty": "0.1.0"
   },
